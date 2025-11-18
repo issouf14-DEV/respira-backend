@@ -1,25 +1,18 @@
-# Boxy generator
+# Boxy Generator
 
 Une application **React + Redux Toolkit** permettant de personnaliser en temps réel les propriétés visuelles d’un élément HTML (taille, couleur, bordures, ombres portées).  
-Le but, est de fournir une interface intuitive avec **sliders**, **color pickers** et **panneaux dynamiques** pour créer rapidement des designs personnalisés.
-
+Le but est de fournir une interface intuitive avec **sliders**, **color pickers** et **panneaux dynamiques** pour créer rapidement des designs personnalisés.
 
 ---
-
 
 ## 🚀 Fonctionnalités
 
 - 📏 **Contrôles dynamiques** : ajustez largeur, hauteur, border radius, etc.
 - 🎨 **Choix de couleurs** via un color picker intégré.
-- 🌫 **Gestion d’ombres multiples** avec réglages précis :
-  - Offset horizontal & vertical
-  - Rayon de flou
-  - Rayon de diffusion (spread)
-  - Couleur
-  - Mode `inset` ou non
-- 🔄 **Mise à jour en temps réel** grâce à Redux Toolkit.
-- 📦 **Composants réutilisables** (`BoxRange`, `BoxColorPicker`, etc.).
-- 🎯 **Interface responsive** grâce à Tailwind CSS.
+- 🌫 **Gestion d’ombres multiples** avec réglages précis
+- 🔄 **Mise à jour en temps réel** grâce à Redux Toolkit
+- 📦 **Composants réutilisables**
+- 🎯 **Interface responsive** avec Tailwind CSS
 
 ---
 
@@ -59,10 +52,9 @@ Les contributions sont bienvenues !
 3. Commit tes changements (`git commit -m 'Ajout de la fonctionnalité'`)
 4. Push sur ta branche (`git push origin feature/ta-fonctionnalite`)
 5. Ouvre une Pull Request
+
 ## 📧 Contact
 
 - **Auteur** : FOFANA ISSOUF
 - **Email** : fofanaissouf179@gmail.com
-- **GitHub** :https://github.com/issouf14-DEV
-
----
+- **GitHub** : https://github.com/issouf14-DEV
