@@ -12,7 +12,7 @@ function App() {
       <main className="flex flex-wrap justify-center items-center bg-gray-100 px-10 md:flex-nowrap flex-grow">
         {/* <LeftContainner /> */}
         <LeftContainner />
-        <Visualization/> 
+        <Visualization />
 
 
 
