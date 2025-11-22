@@ -1,0 +1,41 @@
+# Fichiers Python compilés
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Base de données
+*.sqlite3
+db.sqlite3
+
+# Variables d'environnement et secrets (IMPORTANT!)
+.env
+.env.local
+.env.*.local
+
+# Environnement virtuel Python
+venv/
+env/
+ENV/
+.venv
+
+# Fichiers Django
+staticfiles/
+media/
+*.log
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Fichiers temporaires
+*.tmp
+*.bak
+*.orig
