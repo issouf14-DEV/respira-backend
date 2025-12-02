@@ -24,8 +24,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'core.middleware.SecurityMiddleware',
-    'core.middleware.APIRateLimitMiddleware',
+    'core.security.SecurityMiddleware',  # Middleware de sécurité médicale
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.utils import timezone
@@ -7,8 +7,10 @@ from django.db.models import Avg, Max, Min, Count
 from .models import BraceletDevice, SensorData, SensorAnalytics, RiskAlert
 from .serializers import (
     BraceletDeviceSerializer, SensorDataSerializer, 
-    SensorDataCreateSerializer, SensorAnalyticsSerializer, RiskAlertSerializer
+    SensorDataCreateSerializer, SensorAnalyticsSerializer, RiskAlertSerializer,
+    SecureHealthSummarySerializer
 )
+from core.security import APISecurityValidator, DataEncryptionHelper, SensorDataValidator
 
 class BraceletDeviceViewSet(viewsets.ModelViewSet):
     serializer_class = BraceletDeviceSerializer
@@ -20,15 +22,24 @@ class BraceletDeviceViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 class SensorDataViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    
     def get_serializer_class(self):
         if self.action == 'create':
             return SensorDataCreateSerializer
         return SensorDataSerializer
     
     def get_queryset(self):
+        # Sécurité: isolation des données par utilisateur
         return SensorData.objects.filter(user=self.request.user)
     
     def perform_create(self, serializer):
+        # Log sécurisé de création de données
+        import logging
+        logger = logging.getLogger('django.security')
+        hashed_user = DataEncryptionHelper.hash_user_identifier(self.request.user.id)
+        logger.info(f"Création données capteurs: User#{hashed_user}")
+        
         bracelet = BraceletDevice.objects.filter(
             user=self.request.user, is_connected=True
         ).first()
@@ -57,8 +68,14 @@ class SensorDataViewSet(viewsets.ModelViewSet):
         """Créer automatiquement des alertes basées sur les données"""
         alerts = []
         
+        # Log sécurisé pour valeurs critiques
+        import logging
+        logger = logging.getLogger('django.security')
+        hashed_user = DataEncryptionHelper.hash_user_identifier(sensor_data.user.id)
+        
         # ⭐⭐⭐⭐⭐ SpO2 critique
         if sensor_data.spo2 and sensor_data.spo2 < 90:
+            logger.critical(f"SpO2 critique User#{hashed_user}: {sensor_data.spo2}%")
             alerts.append({
                 'alert_type': 'LOW_SPO2',
                 'severity': 'CRITICAL',
@@ -68,6 +85,7 @@ class SensorDataViewSet(viewsets.ModelViewSet):
         # ⭐⭐⭐⭐⭐ Fréquence respiratoire anormale
         if sensor_data.respiratory_rate:
             if sensor_data.respiratory_rate > 30:
+                logger.warning(f"FR élevée User#{hashed_user}: {sensor_data.respiratory_rate}/min")
                 alerts.append({
                     'alert_type': 'HIGH_RESPIRATORY_RATE',
                     'severity': 'WARNING',
@@ -76,6 +94,7 @@ class SensorDataViewSet(viewsets.ModelViewSet):
         
         # ⭐⭐⭐⭐⭐ Qualité de l'air dangereuse
         if sensor_data.aqi and sensor_data.aqi > 150:
+            logger.warning(f"AQI dangereux User#{hashed_user}: {sensor_data.aqi}")
             alerts.append({
                 'alert_type': 'POOR_AIR_QUALITY',
                 'severity': 'CRITICAL' if sensor_data.aqi > 300 else 'WARNING',
@@ -84,6 +103,7 @@ class SensorDataViewSet(viewsets.ModelViewSet):
         
         # ⭐⭐⭐⭐ Fumée détectée
         if sensor_data.smoke_detected:
+            logger.critical(f"Fumée détectée User#{hashed_user}")
             alerts.append({
                 'alert_type': 'SMOKE_DETECTED',
                 'severity': 'CRITICAL',
