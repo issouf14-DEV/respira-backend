@@ -234,7 +234,7 @@ Content-Type: application/json
 // Réponse (201 Created)
 ```
 
-### 📤 Envoyer des données capteurs
+### 📤 Envoyer des données capteurs (AMÉLIORÉ)
 
 ```dart
 POST /sensors/data/
@@ -243,31 +243,70 @@ POST /sensors/data/
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 Content-Type: application/json
 
-// Body
+// Body - TOUTES LES NOUVELLES FEATURES ⭐⭐⭐⭐⭐
 {
-  "timestamp": "2025-11-20T14:30:00Z",
+  "timestamp": "2025-12-02T14:30:00Z",
+  // ⭐⭐⭐⭐⭐ CRITIQUES
   "spo2": 97,                        // Saturation oxygène (70-100%)
+  "respiratory_rate": 16,            // Fréquence respiratoire (10-40/min)
+  "aqi": 45,                         // Air Quality Index (0-500)
+  
+  // ⭐⭐⭐⭐ IMPORTANTES
   "heart_rate": 72,                  // Fréquence cardiaque (30-220 BPM)
-  "respiratory_rate": 16,            // Fréquence respiratoire (5-60/min)
-  "temperature": 36.7,               // Température (35-42°C)
-  "activity_level": "REST",          // REST, LIGHT, MODERATE, INTENSE
-  "steps": 5000,                     // Nombre de pas
-  "risk_score": 25                   // Score de risque (0-100)
+  "smoke_detected": false,           // Fumée détectée (boolean)
+  "pollen_level": "MEDIUM",          // LOW, MEDIUM, HIGH
+  
+  // ⭐⭐⭐ MODÉRÉES  
+  "temperature": 36.7,               // Température (°C)
+  "humidity": 65,                    // Humidité (%)
+  "activity_level": "WALK",          // REST, WALK, RUN
+  "steps": 5000                      // Nombre de pas
 }
 
-// Réponse (201 Created)
+// Réponse (201 Created) - ENRICHIE
 {
   "id": 123,
-  "timestamp": "2025-11-20T14:30:00Z",
+  "timestamp": "2025-12-02T14:30:00Z",
   "spo2": 97,
-  "heart_rate": 72,
   "respiratory_rate": 16,
+  "aqi": 45,
+  "heart_rate": 72,
+  "smoke_detected": false,
+  "pollen_level": "MEDIUM",
   "temperature": 36.7,
-  "activity_level": "REST",
+  "humidity": 65,
+  "activity_level": "WALK",
   "steps": 5000,
-  "risk_score": 25,
-  "risk_level": "LOW",               // Calculé automatiquement
-  "created_at": "2025-11-20T14:30:15Z"
+  "hour_of_day": 14,                 // Calculé automatiquement
+  "risk_score": 15,                  // Calculé intelligemment
+  "risk_level": "LOW",               // AUTO: LOW, MODERATE, HIGH, CRITICAL
+  "created_at": "2025-12-02T14:30:15Z"
+}
+```
+
+### 🏥 Résumé de santé intelligent (NOUVEAU)
+
+```dart
+GET /sensors/data/health_summary/
+
+// Headers
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+// Réponse (200 OK)
+{
+  "health_score": 85,                // Score global (0-100)
+  "health_level": "GOOD",            // EXCELLENT, GOOD, FAIR, POOR
+  "warnings": [
+    "Qualité de l'air médiocre: AQI 120"
+  ],
+  "latest_data": {
+    "spo2": 96,
+    "respiratory_rate": 18,
+    "aqi": 120,
+    "risk_score": 25,
+    "risk_level": "LOW"
+  },
+  "readings_24h": 144               // Nombre de mesures sur 24h
 }
 ```
 
@@ -341,7 +380,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 }
 ```
 
-### 📈 Statistiques
+### 📈 Statistiques avancées (AMÉLIORÉ)
 
 ```dart
 GET /sensors/data/stats/
@@ -352,23 +391,144 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 // Query Parameters (optionnel)
 ?period=24h                           // 24h, 7d, 30d
 
-// Réponse (200 OK)
+// Réponse (200 OK) - ENRICHIE
 {
   "period": "24h",
   "stats": {
+    // ⭐⭐⭐⭐⭐ SpO2
     "avg_spo2": 96.5,
     "min_spo2": 93,
+    "max_spo2": 99,
+    
+    // ⭐⭐⭐⭐⭐ Fréquence respiratoire  
+    "avg_respiratory_rate": 16.2,
+    
+    // ⭐⭐⭐⭐⭐ Qualité de l'air
+    "avg_aqi": 65.3,
+    "max_aqi": 120,
+    
+    // ⭐⭐⭐⭐ Fréquence cardiaque
     "avg_heart_rate": 75.2,
-    "max_heart_rate": 120
-  }
+    "min_heart_rate": 58,
+    "max_heart_rate": 120,
+    
+    // Score de risque
+    "avg_risk_score": 22.5
+  },
+  "risk_distribution": [
+    {"risk_level": "LOW", "count": 142},
+    {"risk_level": "MODERATE", "count": 2}
+  ],
+  "total_readings": 144
 }
 ```
 
 ---
 
-## 🌍 4. ENVIRONNEMENT
+## 🚨 5. ALERTES ET MONITORING (NOUVEAU)
 
-### 🌫️ Qualité de l'air actuelle
+### 📋 Liste des alertes
+
+```dart
+GET /sensors/alerts/
+
+// Headers
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+// Réponse (200 OK)
+[
+  {
+    "id": 1,
+    "alert_type": "LOW_SPO2",
+    "severity": "CRITICAL",
+    "message": "SpO2 critique détectée: 89% (normal: >95%)",
+    "is_read": false,
+    "is_dismissed": false,
+    "timestamp": "2025-12-02T14:30:00Z"
+  },
+  {
+    "id": 2,
+    "alert_type": "POOR_AIR_QUALITY", 
+    "severity": "WARNING",
+    "message": "Qualité de l'air dangereuse: AQI 180 (bon: <50)",
+    "is_read": true,
+    "is_dismissed": false,
+    "timestamp": "2025-12-02T13:45:00Z"
+  }
+]
+```
+
+### 🔔 Alertes non lues
+
+```dart
+GET /sensors/alerts/unread/
+
+// Headers
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+// Réponse (200 OK) - Seulement les alertes non lues
+[
+  {
+    "id": 1,
+    "alert_type": "SMOKE_DETECTED",
+    "severity": "CRITICAL",
+    "message": "Fumée détectée dans votre environnement!",
+    "timestamp": "2025-12-02T14:30:00Z"
+  }
+]
+```
+
+### ✅ Marquer une alerte comme lue
+
+```dart
+POST /sensors/alerts/{id}/mark_read/
+
+// Headers
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+// Réponse (200 OK)
+{
+  "status": "marked_read"
+}
+```
+
+---
+
+## 📊 6. ANALYTICS AVANCÉES (NOUVEAU)
+
+### 📈 Données d'analyse temporelle
+
+```dart
+GET /sensors/analytics/
+
+// Headers  
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+// Réponse (200 OK)
+[
+  {
+    "id": 1,
+    "timestamp": "2025-12-02T14:00:00Z",
+    "spo2_variation_1h": -2.5,        // Variation SpO2 sur 1h
+    "spo2_avg_1h": 95.8,              // Moyenne SpO2 sur 1h
+    "spo2_min_1h": 93,                // Min SpO2 sur 1h  
+    "aqi_avg_3h": 75.2,               // AQI moyen sur 3h
+    "aqi_avg_6h": 68.9,               // AQI moyen sur 6h
+    "aqi_avg_24h": 62.3,              // AQI moyen sur 24h
+    "heart_rate_avg_1h": 78.5,        // FC moyenne sur 1h
+    "heart_rate_variability": 12.3,   // Variabilité FC
+    "respiratory_rate_avg_1h": 16.8,  // FR moyenne sur 1h
+    "respiratory_health_score": 82,   // Score santé respiratoire (0-100)
+    "environmental_risk_score": 35    // Score risque environnemental (0-100)
+  }
+]
+```
+
+---
+
+## 🌍 7. ENVIRONNEMENT AMÉLIORÉ
+
+### 🌫️ Qualité de l'air actuelle (ENRICHIE)
 
 ```dart
 GET /environment/air-quality/current/
@@ -379,15 +539,18 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 // Query Parameters (optionnel)
 ?city=Abidjan                         // Si omis, utilise la ville du profil
 
-// Réponse (200 OK)
+// Réponse (200 OK) - ENRICHIE
 {
   "id": 4,
   "city": "Abidjan",
-  "timestamp": "2025-11-20T13:47:19Z",
-  "aqi": 40,                          // Air Quality Index
-  "aqi_level": "GOOD",                // GOOD, MODERATE, UNHEALTHY, HAZARDOUS
-  "pm25": 25.68,                      // Particules fines PM2.5
-  "created_at": "2025-11-20T13:47:19Z"
+  "timestamp": "2025-12-02T13:47:19Z",
+  "aqi": 85,                          // Air Quality Index
+  "aqi_level": "MODERATE",            // GOOD, MODERATE, UNHEALTHY, HAZARDOUS
+  "pm25": 42.68,                      // Particules fines PM2.5
+  "pm10": 76.50,                      // Particules PM10
+  "pollen_level": "HIGH",             // ⭐⭐⭐⭐ NOUVEAU: Niveau pollen
+  "smoke_detected": false,            // ⭐⭐⭐⭐ NOUVEAU: Fumée détectée
+  "created_at": "2025-12-02T13:47:19Z"
 }
 ```
 
@@ -416,7 +579,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ---
 
-## 🎨 5. CODES COULEURS POUR L'INTERFACE
+## 🎨 8. CODES COULEURS POUR L'INTERFACE (MIS À JOUR)
 
 ### Risk Level (Niveau de risque)
 
@@ -440,9 +603,39 @@ const Map<String, Color> aqiColors = {
 };
 ```
 
+### Alert Severity (Sévérité des alertes)
+
+```dart
+const Map<String, Color> alertColors = {
+  'INFO': Color(0xFF2196F3),         // Bleu
+  'WARNING': Color(0xFFFF9800),      // Orange
+  'CRITICAL': Color(0xFFF44336),     // Rouge
+};
+```
+
+### Pollen Level (Niveau de pollen)
+
+```dart
+const Map<String, Color> pollenColors = {
+  'LOW': Color(0xFF4CAF50),          // Vert
+  'MEDIUM': Color(0xFFFFC107),       // Jaune
+  'HIGH': Color(0xFFFF9800),         // Orange
+};
+```
+
+### Activity Level (Niveau d'activité)
+
+```dart
+const Map<String, Color> activityColors = {
+  'REST': Color(0xFF9C27B0),         // Violet
+  'WALK': Color(0xFF2196F3),         // Bleu
+  'RUN': Color(0xFFFF5722),          // Rouge-orange
+};
+```
+
 ---
 
-## 📋 6. EXEMPLE COMPLET FLUTTER
+## 📋 9. EXEMPLE COMPLET FLUTTER (MIS À JOUR)
 
 ### Service API complet
 
