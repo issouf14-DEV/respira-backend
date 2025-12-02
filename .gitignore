@@ -10,6 +10,7 @@ db.sqlite3
 
 # Variables d'environnement et secrets (IMPORTANT!)
 .env
+.env.example
 .env.local
 .env.*.local
 
