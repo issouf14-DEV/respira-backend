@@ -10,9 +10,15 @@ db.sqlite3
 
 # Variables d'environnement et secrets (IMPORTANT!)
 .env
-.env.example
+.env.*
+!.env.example
+.env.production
+.env.development
 .env.local
-.env.*.local
+secrets/
+*.key
+*.pem
+*.crt
 
 # Environnement virtuel Python
 venv/

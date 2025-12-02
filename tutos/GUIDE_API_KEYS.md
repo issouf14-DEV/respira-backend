@@ -129,8 +129,8 @@ IQAIR_API_KEY=your_key_here
 OPENWEATHER_API_KEY=your_key_here
 
 # Après (remplacez par vos vraies clés)
-IQAIR_API_KEY=12345678-1234-1234-1234-123456789abc
-OPENWEATHER_API_KEY=abcdef0123456789abcdef0123456789
+IQAIR_API_KEY=your_iqair_api_key_here
+OPENWEATHER_API_KEY=your_openweather_api_key_here
 ```
 
 #### Étape 3 : Redémarrer Docker
@@ -167,8 +167,8 @@ Invoke-RestMethod -Uri "http://localhost:8000/api/v1/environment/weather/current
 services:
   web:
     environment:
-      - IQAIR_API_KEY=12345678-1234-1234-1234-123456789abc
-      - OPENWEATHER_API_KEY=abcdef0123456789abcdef0123456789
+      - IQAIR_API_KEY=your_iqair_api_key_here
+      - OPENWEATHER_API_KEY=your_openweather_api_key_here
 ```
 
 ---

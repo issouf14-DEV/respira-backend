@@ -52,7 +52,7 @@ Write-Host "`n4. Test d'authentification..." -ForegroundColor Yellow
 try {
     $loginBody = @{
         email = 'test@respira.com'
-        password = 'TestPass123!'
+        password = 'SecureTestPass123!'
     } | ConvertTo-Json
     
     $response = Invoke-WebRequest -Uri http://localhost:8000/api/v1/users/auth/login/ -Method POST -Body $loginBody -ContentType 'application/json' -ErrorAction Stop
@@ -160,7 +160,7 @@ if ($allOk) {
     Write-Host "  • Swagger:    http://localhost:8000/swagger/" -ForegroundColor Cyan
     Write-Host "`nCOMPTES DE TEST:" -ForegroundColor Yellow
     Write-Host "  • Email:      test@respira.com" -ForegroundColor Cyan
-    Write-Host "  • Password:   TestPass123!" -ForegroundColor Cyan
+    Write-Host "  • Password:   SecureTestPass123!" -ForegroundColor Cyan
 }
 
 Write-Host ""
