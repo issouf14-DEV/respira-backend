@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réinitialiser Disponibilité Véhicules</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #dc2626;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #b91c1c;
+        }
+        .success {
+            background: #10b981;
+        }
+        .success:hover {
+            background: #059669;
+        }
+        .info {
+            background: #3b82f6;
+        }
+        .info:hover {
+            background: #2563eb;
+        }
+        #log {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 5px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            padding: 5px;
+            margin: 5px 0;
+            border-left: 3px solid #3b82f6;
+            padding-left: 10px;
+        }
+        .log-success {
+            border-left-color: #10b981;
+            color: #047857;
+        }
+        .log-error {
+            border-left-color: #dc2626;
+            color: #b91c1c;
+        }
+        .log-info {
+            border-left-color: #3b82f6;
+            color: #1e40af;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚗 Gestion Disponibilité des Véhicules</h1>
+        <p>Utilisez ces outils pour gérer la disponibilité des véhicules dans le localStorage.</p>
+        
+        <div style="margin: 20px 0;">
+            <button onclick="checkStatus()" class="info">📊 Vérifier Statut</button>
+            <button onclick="resetAllToAvailable()" class="success">✅ Tout Rendre Disponible</button>
+            <button onclick="updateBasedOnOrders()">🔄 Calculer selon Commandes</button>
+            <button onclick="clearLog()" style="background: #6b7280;">🗑️ Effacer Log</button>
+        </div>
+
+        <div id="log"></div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+            log('Log effacé', 'info');
+        }
+
+        function checkStatus() {
+            log('🔍 Vérification du statut...', 'info');
+            
+            // Vérifier mock_vehicles
+            const mockVehicles = JSON.parse(localStorage.getItem('mock_vehicles') || '[]');
+            const vehicles = JSON.parse(localStorage.getItem('vehicles') || '[]');
+            const pendingOrders = JSON.parse(localStorage.getItem('pendingOrders') || '[]');
+            const mockOrders = JSON.parse(localStorage.getItem('mock_orders') || '[]');
+
+            log(`📦 mock_vehicles: ${mockVehicles.length} véhicules`, 'info');
+            log(`📦 vehicles: ${vehicles.length} véhicules`, 'info');
+            log(`📋 pendingOrders: ${pendingOrders.length} commandes`, 'info');
+            log(`📋 mock_orders: ${mockOrders.length} commandes`, 'info');
+
+            const availableMock = mockVehicles.filter(v => v.available).length;
+            const availableVehicles = vehicles.filter(v => v.available).length;
+
+            log(`✅ mock_vehicles disponibles: ${availableMock}/${mockVehicles.length}`, 'success');
+            log(`✅ vehicles disponibles: ${availableVehicles}/${vehicles.length}`, 'success');
+
+            // Vérifier les commandes validées
+            const allOrders = [...pendingOrders, ...mockOrders];
+            const validatedOrders = allOrders.filter(o => 
+                o.status === 'validee' || o.status === 'validated' || o.status === 'confirmed'
+            );
+            log(`🔒 Commandes validées: ${validatedOrders.length}`, 'info');
+
+            validatedOrders.forEach(order => {
+                const vehicleId = order.vehicleId || order.vehicle?._id || order.vehicle?.id;
+                log(`  → Véhicule ${vehicleId} réservé (${order.status})`, 'info');
+            });
+        }
+
+        function resetAllToAvailable() {
+            log('🔄 Réinitialisation de tous les véhicules à "disponible"...', 'info');
+            
+            // Réinitialiser mock_vehicles
+            const mockVehicles = JSON.parse(localStorage.getItem('mock_vehicles') || '[]');
+            if (mockVehicles.length > 0) {
+                const updated = mockVehicles.map(v => ({...v, available: true}));
+                localStorage.setItem('mock_vehicles', JSON.stringify(updated));
+                log(`✅ ${updated.length} véhicules dans mock_vehicles rendus disponibles`, 'success');
+            }
+
+            // Réinitialiser vehicles
+            const vehicles = JSON.parse(localStorage.getItem('vehicles') || '[]');
+            if (vehicles.length > 0) {
+                const updated = vehicles.map(v => ({...v, available: true}));
+                localStorage.setItem('vehicles', JSON.stringify(updated));
+                log(`✅ ${updated.length} véhicules dans vehicles rendus disponibles`, 'success');
+            }
+
+            log('✅ Tous les véhicules sont maintenant disponibles!', 'success');
+            log('🔄 Rechargez la page admin pour voir les changements', 'info');
+        }
+
+        function updateBasedOnOrders() {
+            log('🔄 Calcul de la disponibilité selon les commandes...', 'info');
+
+            // Récupérer toutes les données
+            const mockVehicles = JSON.parse(localStorage.getItem('mock_vehicles') || '[]');
+            const vehicles = JSON.parse(localStorage.getItem('vehicles') || '[]');
+            const pendingOrders = JSON.parse(localStorage.getItem('pendingOrders') || '[]');
+            const mockOrders = JSON.parse(localStorage.getItem('mock_orders') || '[]');
+            const allOrders = [...pendingOrders, ...mockOrders];
+
+            log(`📊 Analyse de ${allOrders.length} commandes...`, 'info');
+
+            // Identifier les véhicules réservés
+            const reservedVehicleIds = new Set();
+            allOrders.forEach(order => {
+                if (order.status === 'validee' || order.status === 'validated' || order.status === 'confirmed') {
+                    const vehicleId = order.vehicleId || order.vehicle?._id || order.vehicle?.id;
+                    if (vehicleId) {
+                        reservedVehicleIds.add(vehicleId.toString());
+                        log(`🔒 Véhicule ${vehicleId} réservé (${order.status})`, 'info');
+                    }
+                }
+            });
+
+            log(`🔒 ${reservedVehicleIds.size} véhicules avec commandes validées`, 'info');
+
+            // Mettre à jour mock_vehicles
+            if (mockVehicles.length > 0) {
+                const updated = mockVehicles.map(v => {
+                    const vehicleId = (v._id || v.id).toString();
+                    const isAvailable = !reservedVehicleIds.has(vehicleId);
+                    return {...v, available: isAvailable};
+                });
+                localStorage.setItem('mock_vehicles', JSON.stringify(updated));
+                const available = updated.filter(v => v.available).length;
+                log(`✅ mock_vehicles: ${available}/${updated.length} disponibles`, 'success');
+            }
+
+            // Mettre à jour vehicles
+            if (vehicles.length > 0) {
+                const updated = vehicles.map(v => {
+                    const vehicleId = (v._id || v.id).toString();
+                    const isAvailable = !reservedVehicleIds.has(vehicleId);
+                    return {...v, available: isAvailable};
+                });
+                localStorage.setItem('vehicles', JSON.stringify(updated));
+                const available = updated.filter(v => v.available).length;
+                log(`✅ vehicles: ${available}/${updated.length} disponibles`, 'success');
+            }
+
+            log('✅ Disponibilité recalculée!', 'success');
+            log('🔄 Rechargez la page admin pour voir les changements', 'info');
+        }
+
+        // Log initial
+        log('🚀 Outil prêt à l\'utilisation', 'success');
+        log('Cliquez sur "Vérifier Statut" pour voir l\'état actuel', 'info');
+    </script>
+</body>
+</html>

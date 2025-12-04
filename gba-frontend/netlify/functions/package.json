@@ -1,0 +1,12 @@
+{
+  "name": "gba-email-functions",
+  "version": "1.0.0",
+  "description": "Fonctions Netlify pour l'envoi d'emails GBA",
+  "dependencies": {
+    "nodemailer": "^6.9.7",
+    "@sendgrid/mail": "^8.1.4"
+  },
+  "scripts": {
+    "test": "node send-email.test.cjs"
+  }
+}
