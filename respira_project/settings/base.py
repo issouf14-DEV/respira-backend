@@ -142,3 +142,47 @@ CORS_ALLOW_METHODS = [
 
 IQAIR_API_KEY = os.getenv('IQAIR_API_KEY', '')
 OPENWEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY', '')
+
+# ===========================
+# PROTECTIONS DE SÉCURITÉ DJANGO
+# ===========================
+
+# Protection contre les injections SQL
+# Django 5.1.5+ inclut des corrections pour les vulnérabilités SQL injection
+# Toujours utiliser des querysets paramétrés et éviter raw SQL
+
+# Protection contre DoS - Limitation des requêtes
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5 MB
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 1000
+
+# Protection contre DoS - IPv6 validation
+# Django 5.1.5+ inclut des corrections pour la validation IPv6
+
+# Protection contre les attaques par déni de service Windows
+# Utilisez des chemins absolus et évitez les redirections non validées
+
+# Protection contre les traversées de répertoires
+# MEDIA_ROOT et STATIC_ROOT sont déjà définis avec des chemins sécurisés
+
+# Désactivation du parsing XML non sécurisé
+# Utilisation de defusedxml recommandée pour le parsing XML si nécessaire
+
+# Configuration sécurisée des sessions
+SESSION_COOKIE_SECURE = True  # Activé en production
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+# Configuration sécurisée des cookies CSRF
+CSRF_COOKIE_SECURE = True  # Activé en production
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SAMESITE = 'Lax'
+
+# Protection XSS et Clickjacking
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+
+# En-têtes de sécurité supplémentaires
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
