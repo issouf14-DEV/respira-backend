@@ -1,0 +1,65 @@
+# Configuration Dependabot pour les mises à jour automatiques de sécurité
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Surveiller les dépendances pip (Python)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    
+    # Regrouper les mises à jour par type
+    groups:
+      django:
+        patterns:
+          - "Django*"
+          - "django*"
+      security:
+        patterns:
+          - "defusedxml"
+          - "bleach"
+          - "safety"
+          - "bandit"
+      rest-framework:
+        patterns:
+          - "djangorestframework*"
+    
+    # Labels pour les PRs
+    labels:
+      - "dependencies"
+      - "security"
+      - "python"
+    
+    # Assignees
+    assignees:
+      - "issouf14-DEV"
+    
+    # Ignorer certaines mises à jour mineures si nécessaire
+    ignore:
+      # Ignorer les versions de développement
+      - dependency-name: "*"
+        update-types: ["version-update:semver-patch"]
+    
+    # Commit message prefix
+    commit-message:
+      prefix: "⬆️ [Security]"
+      prefix-development: "⬆️ [Dev]"
+      include: "scope"
+    
+    # Vérifier les mises à jour de sécurité critiques quotidiennement
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+    
+  # Surveiller les GitHub Actions (si vous en utilisez)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "github-actions"
