@@ -1,11 +1,11 @@
 # Core Django - Version corrigée pour vulnérabilités SQL injection et DoS
-Django==5.1.5
+Django==5.1.15
 
 # Django REST Framework
 djangorestframework==3.15.2
 
 # JWT Authentication - Version corrigée pour gestion des privilèges
-djangorestframework-simplejwt==5.4.0
+djangorestframework-simplejwt==5.5.1
 
 # CORS et Filtres
 django-cors-headers==4.6.0
@@ -22,7 +22,7 @@ dj-database-url==2.3.0
 python-dotenv==1.0.1
 
 # HTTP Requests - Version corrigée pour fuite .netrc
-requests==2.32.3
+requests==2.32.4
 
 # Image Processing
 Pillow==11.0.0
