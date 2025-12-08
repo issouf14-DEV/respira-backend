@@ -27,7 +27,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'core.security_django6.Django6SecurityMiddleware',  # Middleware Django 6.0 sécurisé
+    'core.security_final.Django6SecurityMiddleware',  # Middleware Django 6.0 final
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
