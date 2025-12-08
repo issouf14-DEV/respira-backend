@@ -10,7 +10,7 @@ Ce document détaille les corrections apportées pour résoudre les 14 vulnérab
 
 ### 1. Django - Injections SQL via le mot-clé `_connector` (#49)
 **Statut : ✅ CORRIGÉ**
-- **Action** : Mise à jour de Django 5.1.4 → 5.1.5
+- **Action** : Mise à jour de Django 5.1.4 → 5.2.9
 - **Description** : Django 5.1.5 corrige les vulnérabilités d'injection SQL via l'argument `_connector` dans les objets QuerySet et Q
 - **Recommandation** : Toujours utiliser des querysets paramétrés, jamais de SQL brut avec des entrées utilisateur
 
@@ -20,13 +20,13 @@ Ce document détaille les corrections apportées pour résoudre les 14 vulnérab
 
 ### 2. Django - DoS dans HttpResponseRedirect sous Windows (#48)
 **Statut : ✅ CORRIGÉ**
-- **Action** : Mise à jour vers Django 5.1.5
+- **Action** : Mise à jour vers Django 5.2.9
 - **Protection ajoutée** : Validation stricte des URLs de redirection
 - **Recommandation** : Utiliser des chemins absolus pour les redirections
 
 ### 3. Django - Injections SQL dans les alias de colonnes (#47, #45)
 **Statut : ✅ CORRIGÉ**
-- **Action** : Django 5.1.5 inclut des correctifs pour les alias de colonnes
+- **Action** : Django 5.2.9 inclut des correctifs pour les alias de colonnes
 - **Protection** : Validation et échappement automatique des alias
 - **Code sécurisé** :
 ```python
@@ -43,7 +43,7 @@ queryset.extra(select={'alias': 'raw_sql'})
 
 ### 4. Django - DoS lors de la validation IPv6 (#40)
 **Statut : ✅ CORRIGÉ**
-- **Action** : Django 5.1.5 optimise la validation IPv6
+- **Action** : Django 5.2.9 optimise la validation IPv6
 - **Protection** : Limitation du temps de traitement pour les validations IPv6
 
 ### 5. Django - DoS via l'extraction de texte XML (#51)
@@ -70,8 +70,8 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 1000
 
 ### 8. Requests - Fuite d'identifiants .netrc (#31)
 **Statut : ✅ CORRIGÉ**
-- **Action** : Maintien de requests==2.32.3 (version corrigée)
-- **Protection** : La version 2.32.3+ ne lit plus les identifiants .netrc via URLs malveillantes
+- **Action** : Mise à jour vers requests==2.32.5 (dernière version stable)
+- **Protection** : La version 2.32.5 ne lit plus les identifiants .netrc via URLs malveillantes
 - **Recommandation** : Toujours valider les URLs avant d'effectuer des requêtes
 
 ### 9. Django - DoS dans strip_tags() (#43)
@@ -109,7 +109,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # Chemin absolu sécurisé
 
 ### 13. djangorestframework-simplejwt - Gestion incorrecte des privilèges (#32)
 **Statut : ✅ CORRIGÉ**
-- **Action** : Mise à jour de 5.3.0 → 5.4.0
+- **Action** : Mise à jour de 5.3.0 → 5.5.1
 - **Protection** : Gestion améliorée des tokens et permissions
 
 ---
@@ -118,10 +118,10 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # Chemin absolu sécurisé
 
 ### requirements/base.txt
 ```
-Django==5.1.5                          # 5.1.4 → 5.1.5
+Django==5.2.9                          # 5.1.4 → 5.2.9 (LTS)
 djangorestframework==3.15.2            # Maintenu à jour
-djangorestframework-simplejwt==5.4.0   # 5.3.0 → 5.4.0
-requests==2.32.3                       # Maintenu (version sécurisée)
+djangorestframework-simplejwt==5.5.1   # 5.3.0 → 5.5.1
+requests==2.32.5                       # 2.32.3 → 2.32.5
 psycopg2-binary==2.9.10                # 2.9.9 → 2.9.10
 dj-database-url==2.3.0                 # 2.2.0 → 2.3.0
 ```

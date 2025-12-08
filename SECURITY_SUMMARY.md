@@ -8,9 +8,9 @@
 
 | Package | Avant | Après | Vulnérabilités corrigées |
 |---------|-------|-------|--------------------------|
-| **Django** | 5.1.4 | **5.1.5** | 11 vulnérabilités (critique, haute, modérée, faible) |
-| **djangorestframework-simplejwt** | 5.3.0 | **5.4.0** | 1 vulnérabilité (faible - gestion privilèges) |
-| **requests** | 2.32.3 | **2.32.3** | ✅ Déjà sécurisé (fuite .netrc corrigée) |
+| **Django** | 5.1.4 | **5.2.9** | 11 vulnérabilités (critique, haute, modérée, faible) |
+| **djangorestframework-simplejwt** | 5.3.0 | **5.5.1** | 1 vulnérabilité (faible - gestion privilèges) |
+| **requests** | 2.32.3 | **2.32.5** | Fuite .netrc corrigée |
 | **psycopg2-binary** | 2.9.9 | **2.9.10** | Amélioration stabilité |
 | **dj-database-url** | 2.2.0 | **2.3.0** | Amélioration stabilité |
 

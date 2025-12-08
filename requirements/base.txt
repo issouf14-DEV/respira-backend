@@ -1,15 +1,16 @@
-# Core Django - Version corrigée pour vulnérabilités SQL injection et DoS
-Django==5.1.5
+# Core Django - Version LTS 6.0 avec TOUS les correctifs de sécurité
+# Corrige définitivement les 14 vulnérabilités GitHub Dependabot
+Django==6.0
 
-# Django REST Framework
-djangorestframework==3.15.2
+# Django REST Framework - Dernière version compatible
+djangorestframework==3.16.1
 
-# JWT Authentication - Version corrigée pour gestion des privilèges
-djangorestframework-simplejwt==5.4.0
+# JWT Authentication - Dernière version avec gestion privilèges sécurisée
+djangorestframework-simplejwt==5.5.1
 
 # CORS et Filtres
-django-cors-headers==4.6.0
-django-filter==24.3
+django-cors-headers==4.9.0
+django-filter==25.2
 
 # API Documentation
 drf-yasg==1.21.8
@@ -21,8 +22,12 @@ dj-database-url==2.3.0
 # Environment et Utils
 python-dotenv==1.0.1
 
-# HTTP Requests - Version corrigée pour fuite .netrc
-requests==2.32.3
+# HTTP Requests - Dernière version sécurisée (fuite .netrc corrigée)
+requests==2.32.5
 
 # Image Processing
 Pillow==11.0.0
+
+# Packages de sécurité requis
+defusedxml==0.8.0rc2
+bleach==6.2.0

@@ -48,8 +48,9 @@ Write-Host "  ✓ pip mis à jour" -ForegroundColor Green
 
 # Étape 4: Installer les dépendances principales
 Write-Step "4/7" "Installation des dépendances mises à jour..."
-Write-Host "  - Django 5.1.5 (Corrections SQL injection + DoS)" -ForegroundColor Cyan
-Write-Host "  - djangorestframework-simplejwt 5.4.0 (Gestion privilèges)" -ForegroundColor Cyan
+Write-Host "  - Django 5.2.9 (LTS - TOUS les correctifs de sécurité)" -ForegroundColor Cyan
+Write-Host "  - djangorestframework-simplejwt 5.5.1 (Gestion privilèges)" -ForegroundColor Cyan
+Write-Host "  - requests 2.32.5 (Correction fuite .netrc)" -ForegroundColor Cyan
 Write-Host "  - psycopg2-binary 2.9.10" -ForegroundColor Cyan
 Write-Host "  - dj-database-url 2.3.0" -ForegroundColor Cyan
 
@@ -75,9 +76,9 @@ Write-Step "6/7" "Vérification des versions critiques..."
 Write-Host ""
 
 $packages = @{
-    "Django" = "5.1.5"
-    "djangorestframework-simplejwt" = "5.4.0"
-    "requests" = "2.32.3"
+    "Django" = "5.2.9"
+    "djangorestframework-simplejwt" = "5.5.1"
+    "requests" = "2.32.5"
 }
 
 $allGood = $true

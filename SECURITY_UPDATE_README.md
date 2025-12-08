@@ -48,9 +48,9 @@ pip list | Select-String -Pattern "Django|simplejwt|requests"
 ```
 
 Vous devriez voir :
-- ✅ Django **5.1.5** (ou supérieur)
-- ✅ djangorestframework-simplejwt **5.4.0** (ou supérieur)
-- ✅ requests **2.32.3** (ou supérieur)
+- ✅ Django **5.2.9** (ou supérieur)
+- ✅ djangorestframework-simplejwt **5.5.1** (ou supérieur)
+- ✅ requests **2.32.5** (ou supérieur)
 
 ### 5. Lancer les migrations
 ```powershell
@@ -68,26 +68,26 @@ python manage.py test
 ## 📊 Vulnérabilités Corrigées
 
 ### 🔴 Critique (1)
-- ✅ **#49** - SQL injection via _connector (Django 5.1.5)
+- ✅ **#49** - SQL injection via _connector (Django 5.2.9)
 
-### 🟠 Hautes (3)
-- ✅ **#48** - DoS HttpResponseRedirect Windows (Django 5.1.5)
-- ✅ **#47** - SQL injection alias colonnes (Django 5.1.5)
-- ✅ **#45** - SQL injection alias (Django 5.1.5)
+### 🟭 Hautes (3)
+- ✅ **#48** - DoS HttpResponseRedirect Windows (Django 5.2.9)
+- ✅ **#47** - SQL injection alias colonnes (Django 5.2.9)
+- ✅ **#45** - SQL injection alias (Django 5.2.9)
 
 ### 🟡 Modérées (8)
-- ✅ **#40** - DoS validation IPv6 (Django 5.1.5)
-- ✅ **#51** - DoS extraction XML (Django 5.1.5 + defusedxml)
-- ✅ **#41** - Allocation ressources (Configuration + Django 5.1.5)
-- ✅ **#42** - DoS Windows (Django 5.1.5 + Configuration)
-- ✅ **#31** - Fuite .netrc (requests 2.32.3)
-- ✅ **#43** - DoS strip_tags() (Django 5.1.5)
-- ✅ **#50** - SQL injection alias (Django 5.1.5)
-- ✅ **#44** - Injection logs (Django 5.1.5 + security_utils.py)
+- ✅ **#40** - DoS validation IPv6 (Django 5.2.9)
+- ✅ **#51** - DoS extraction XML (Django 5.2.9 + defusedxml)
+- ✅ **#41** - Allocation ressources (Configuration + Django 5.2.9)
+- ✅ **#42** - DoS Windows (Django 5.2.9 + Configuration)
+- ✅ **#31** - Fuite .netrc (requests 2.32.5)
+- ✅ **#43** - DoS strip_tags() (Django 5.2.9)
+- ✅ **#50** - SQL injection alias (Django 5.2.9)
+- ✅ **#44** - Injection logs (Django 5.2.9 + security_utils.py)
 
 ### 🟢 Faibles (2)
-- ✅ **#46** - Traversée répertoires (Django 5.1.5 + Configuration)
-- ✅ **#32** - Gestion privilèges (simplejwt 5.4.0)
+- ✅ **#46** - Traversée répertoires (Django 5.2.9 + Configuration)
+- ✅ **#32** - Gestion privilèges (simplejwt 5.5.1)
 
 ---
 
@@ -204,14 +204,13 @@ CSRF_COOKIE_SECURE = True
 ```
 
 ### Variables d'Environnement
-Créez/mettez à jour votre fichier `.env` :
+Créez/mettez à jour votre fichier `.env` (consultez `.env.example` pour le template) :
 ```env
-SECRET_KEY=votre-clé-secrète-très-longue-et-aléatoire
+SECRET_KEY=générez-une-clé-sécurisée-unique
 DEBUG=False
 ALLOWED_HOSTS=votre-domaine.com
 DATABASE_URL=postgresql://...
-IQAIR_API_KEY=votre-clé
-OPENWEATHER_API_KEY=votre-clé
+# Ajoutez vos clés API externes ici (voir documentation des services)
 ```
 
 ### Base de données
