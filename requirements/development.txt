@@ -1,2 +1,2 @@
 -r base.txt
-ipython==8.30.0
+ipython==9.8.0
