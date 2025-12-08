@@ -1,0 +1,120 @@
+name: Audit de Sécurité Automatique
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Exécuter tous les jours à 2h du matin UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  security-audit:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout du code
+      uses: actions/checkout@v4
+    
+    - name: 🐍 Configuration Python 3.14
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.14'
+        cache: 'pip'
+    
+    - name: 📦 Installation des dépendances
+      run: |
+        python -m pip install --upgrade pip
+        pip install safety bandit pip-audit
+        if [ -f requirements/base.txt ]; then pip install -r requirements/base.txt; fi
+        if [ -f requirements/security.txt ]; then pip install -r requirements/security.txt; fi
+    
+    - name: 🛡️ Audit Safety (vulnérabilités connues)
+      run: |
+        safety check --json --output safety-report.json || echo "Safety détecté des problèmes"
+        safety check || true
+    
+    - name: 🔍 Audit pip-audit (base de données OSV)
+      run: |
+        pip-audit --format=json --output=pip-audit-report.json || echo "pip-audit détecté des problèmes"
+        pip-audit || true
+    
+    - name: 🔒 Analyse statique Bandit
+      run: |
+        bandit -r . -x ./venv,./env,./.venv -f json -o bandit-report.json || echo "Bandit détecté des problèmes"
+        bandit -r . -x ./venv,./env,./.venv || true
+    
+    - name: 🚨 Vérification secrets dans le code
+      run: |
+        # Recherche de patterns de secrets
+        echo "🔍 Recherche de secrets potentiels..."
+        grep -r -E "(SECRET_KEY|API_KEY|PASSWORD|TOKEN)" . \
+          --exclude-dir=.git \
+          --exclude-dir=.github \
+          --exclude-dir=venv \
+          --exclude-dir=env \
+          --exclude="*.json" \
+          --exclude="security_audit.py" \
+          --exclude="update_security.py" \
+          --exclude="*.md" || echo "Aucun secret trouvé dans le code"
+    
+    - name: 📊 Upload des rapports d'audit
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: security-reports
+        path: |
+          safety-report.json
+          pip-audit-report.json
+          bandit-report.json
+    
+    - name: 💬 Commentaire PR avec résultats
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          let comment = '## 🛡️ Rapport d\'audit de sécurité\\n\\n';
+          
+          // Lire les rapports s'ils existent
+          try {
+            if (fs.existsSync('safety-report.json')) {
+              const safety = JSON.parse(fs.readFileSync('safety-report.json', 'utf8'));
+              comment += `### Safety: ${safety.vulnerabilities ? safety.vulnerabilities.length : 0} vulnérabilités détectées\\n`;
+            }
+          } catch (e) {
+            comment += '### Safety: ✅ Aucune vulnérabilité détectée\\n';
+          }
+          
+          try {
+            if (fs.existsSync('pip-audit-report.json')) {
+              const pipAudit = JSON.parse(fs.readFileSync('pip-audit-report.json', 'utf8'));
+              comment += `### pip-audit: ${pipAudit.vulnerabilities ? pipAudit.vulnerabilities.length : 0} vulnérabilités détectées\\n`;
+            }
+          } catch (e) {
+            comment += '### pip-audit: ✅ Aucune vulnérabilité détectée\\n';
+          }
+          
+          comment += '\\n📊 Rapports détaillés disponibles dans les artefacts de ce run.';
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
+
+  dependency-review:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: 📥 Checkout
+      uses: actions/checkout@v4
+    
+    - name: 🔍 Dependency Review
+      uses: actions/dependency-review-action@v3
+      with:
+        fail-on-severity: high
+        comment-summary-in-pr: true

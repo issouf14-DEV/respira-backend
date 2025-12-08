@@ -1,0 +1,67 @@
+# Fichiers Python compilés
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Base de données
+*.sqlite3
+db.sqlite3
+
+# === SÉCURITÉ CRITIQUE ===
+# Variables d'environnement et secrets (JAMAIS dans Git!)
+.env
+.env.*
+!.env.example
+.env.production
+.env.development
+.env.local
+.env.staging
+
+# === API KEYS & SECRETS ===
+secrets/
+config/secrets/
+private/
+*.key
+*.pem
+*.crt
+*api*key*
+*secret*
+*password*
+*token*
+openweather*
+iqair*
+
+# === CLÉS SPÉCIFIQUES ===
+# Empêche l'exposition accidentelle de clés API
+*OPENWEATHER*
+*IQAIR*
+*SECRET_KEY*
+*DATABASE_URL*
+
+# Environnement virtuel Python
+venv/
+env/
+ENV/
+.venv
+
+# Fichiers Django
+staticfiles/
+media/
+*.log
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Fichiers temporaires
+*.tmp
+*.bak
+*.orig
