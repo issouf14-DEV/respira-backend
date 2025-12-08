@@ -15,7 +15,7 @@ jobs:
     
     steps:
     - name: 📥 Checkout du code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     
     - name: 🐍 Configuration Python 3.14
       uses: actions/setup-python@v4
@@ -111,7 +111,7 @@ jobs:
     
     steps:
     - name: 📥 Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     
     - name: 🔍 Dependency Review
       uses: actions/dependency-review-action@v3
