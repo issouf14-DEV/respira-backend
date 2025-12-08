@@ -20,7 +20,7 @@ psycopg2-binary==2.9.10
 dj-database-url==2.3.0
 
 # Environment et Utils
-python-dotenv==1.0.1
+python-dotenv==1.2.1
 
 # HTTP Requests - Dernière version sécurisée (fuite .netrc corrigée)
 requests==2.32.5
