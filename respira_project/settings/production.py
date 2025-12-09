@@ -2,14 +2,34 @@ from .base import *
 import dj_database_url
 
 DEBUG = False
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = [
+    '.onrender.com',
+    'respira-backend.onrender.com',
+    '127.0.0.1',
+    'localhost'
+]
 
+# Database configuration pour Render
 DATABASES = {
     'default': dj_database_url.config(
         default=os.getenv('DATABASE_URL'),
-        conn_max_age=600
+        conn_max_age=600,
+        conn_health_checks=True,
     )
 }
+
+# Static files pour Render
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# CORS pour production
+CORS_ALLOWED_ORIGINS = [
+    'https://respira-frontend.onrender.com',
+    'http://localhost:3000',
+    'http://localhost:8081',
+]
+CORS_ALLOW_ALL_ORIGINS = False
 
 # Sécurité HTTPS renforcée
 SECURE_SSL_REDIRECT = True
