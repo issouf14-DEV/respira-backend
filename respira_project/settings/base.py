@@ -31,6 +31,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'core.ultra_security.UltraSecurityMiddleware',  # Ultra sécurité contre vulnérabilités
     'core.security_final.Django6SecurityMiddleware',  # Middleware Django 6.0 final
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -98,30 +99,45 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=int(os.getenv('ACCESS_TOKEN_LIFETIME', 60))),
-    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=int(os.getenv('REFRESH_TOKEN_LIFETIME', 10080))),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Réduit à 15 minutes pour sécurité
+    'REFRESH_TOKEN_LIFETIME': timedelta(hours=24),   # Réduit à 24h
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': True,
-    'ALGORITHM': 'HS256',
+    'ALGORITHM': 'RS256',  # Plus sécurisé que HS256
     'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
     'AUTH_HEADER_TYPES': ('Bearer',),
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
+    'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+    'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
+    'JTI_CLAIM': 'jti',
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
     'TOKEN_OBTAIN_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenObtainPairSerializer',
     'TOKEN_REFRESH_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenRefreshSerializer',
-    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
-    'ISSUER': 'respira-api',
-    'AUDIENCE': None,
+    'TOKEN_VERIFY_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenVerifySerializer',
+    'TOKEN_BLACKLIST_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenBlacklistSerializer',
+    'SLIDING_TOKEN_OBTAIN_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer',
+    'SLIDING_TOKEN_REFRESH_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer',
+    'ISSUER': 'respira-api-secure',
+    'AUDIENCE': 'respira-clients',
     'JWK_URL': None,
     'LEEWAY': 0,
     'VERIFY_SIGNATURE': True,
     'VERIFY_EXP': True,
     'VERIFY_NBF': True,
+    'VERIFY_IAT': True,
+    'VERIFY_AUD': True,
     'REQUIRE_EXP': True,
     'REQUIRE_NBF': False,
     'REQUIRE_IAT': True,
+    'REQUIRE_JTI': True,
 }
 
 # Configuration CORS pour Flutter (accepte toutes les origines en dev)
@@ -203,7 +219,7 @@ SECURE_HSTS_SECONDS = int(os.getenv('SECURE_HSTS_SECONDS', '0'))
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
-# Logging sécurisé pour Django 6.0
+# Logging sécurisé ultra-renforcé pour Django 6.0
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -212,19 +228,53 @@ LOGGING = {
             'format': '{levelname} {asctime} {name} {process:d} {thread:d} {message}',
             'style': '{',
         },
+        'detailed': {
+            'format': '[{asctime}] {levelname} {name} {module} {funcName}:{lineno} {message}',
+            'style': '{',
+        },
     },
     'handlers': {
         'security_file': {
             'level': 'WARNING',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': BASE_DIR / 'logs' / 'security.log',
+            'formatter': 'security',
+            'maxBytes': 10485760,  # 10MB
+            'backupCount': 5,
+        },
+        'vulnerability_file': {
+            'level': 'CRITICAL',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': BASE_DIR / 'logs' / 'vulnerabilities.log',
+            'formatter': 'detailed',
+            'maxBytes': 10485760,
+            'backupCount': 10,
+        },
+        'console': {
+            'level': 'ERROR',
+            'class': 'logging.StreamHandler',
             'formatter': 'security',
         },
     },
     'loggers': {
         'django.security': {
-            'handlers': ['security_file'],
+            'handlers': ['security_file', 'console'],
             'level': 'WARNING',
+            'propagate': True,
+        },
+        'security': {
+            'handlers': ['vulnerability_file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'core.ultra_security': {
+            'handlers': ['vulnerability_file'],
+            'level': 'WARNING',
+            'propagate': True,
+        },
+        'core.secure_requests': {
+            'handlers': ['security_file'],
+            'level': 'INFO',
             'propagate': True,
         },
     },
