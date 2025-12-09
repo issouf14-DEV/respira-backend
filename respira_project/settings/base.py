@@ -6,6 +6,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# CHARGEMENT IMMEDIAT DES PATCHES DE SECURITE
+# Protection contre CVE #52, #53, #54
+try:
+    from core.vulnerability_patches import *
+    print("🔒 PATCHES DE SÉCURITÉ APPLIQUÉS")
+except ImportError:
+    print("⚠️ Patches de sécurité non trouvés")
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Génération d'une clé secrète sécurisée pour Django 6.0
