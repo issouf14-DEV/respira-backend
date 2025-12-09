@@ -1,4 +1,4 @@
-import requests
+from core.secure_requests import get as secure_get
 from django.conf import settings
 from django.utils import timezone
 from ..models import AirQuality
@@ -25,7 +25,7 @@ class IQAirService:
                 'key': self.api_key
             }
             
-            response = requests.get(url, params=params, timeout=10)
+            response = secure_get(url, params=params, timeout=10)
             response.raise_for_status()
             data = response.json()
             
