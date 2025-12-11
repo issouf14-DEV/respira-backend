@@ -80,8 +80,8 @@
 DJANGO_SETTINGS_MODULE=respira_project.settings.production
 SECRET_KEY=[générer_clé_forte_256_bits]
 DATABASE_URL=[url_postgresql_render]
-IQAIR_API_KEY=210b5be1-05a5-4dba-a234-b63ccc67a400
-OPENWEATHER_API_KEY=2d1590f493a8bc8ebbca62389a482ccd
+IQAIR_API_KEY=[votre_cle_iqair]
+OPENWEATHER_API_KEY=[votre_cle_openweather]
 ALLOWED_HOSTS=respira-backend.onrender.com,.onrender.com
 ```
 
