@@ -23,11 +23,8 @@ This repository has undergone a **complete history reset** to permanently elimin
 git log --oneline
 # Shows only: INIT: Repository complètement nettoyé - Nouveau départ sans historique compromis
 
-grep -r "2d1590f493a8bc8ebbca62389a482ccd" .
-# Returns: No matches
-
-grep -r "abcdef0123456789abcdef0123456789" .
-# Returns: No matches
+# All sensitive API keys have been removed from the repository
+# No secrets present in current codebase
 ```
 
 ## Status: ✅ SECURITY CERTIFIED CLEAN
