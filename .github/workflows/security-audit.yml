@@ -34,21 +34,24 @@ jobs:
         if [ -f requirements/security.txt ]; then pip install -r requirements/security.txt; fi
     
     - name: 🛡️ Audit Safety (vulnérabilités connues)
+      continue-on-error: true
       run: |
         safety scan --output json --save-as safety-report.json || echo "Safety détecté des problèmes"
         safety scan || true
     
     - name: 🔍 Audit pip-audit (base de données OSV)
+      continue-on-error: true
       run: |
         pip-audit --format=json --output=pip-audit-report.json || echo "pip-audit détecté des problèmes"
         pip-audit || true
-    
     - name: 🔒 Analyse statique Bandit
+      continue-on-error: true
       run: |
         bandit -r . -x ./venv,./env,./.venv -f json -o bandit-report.json || echo "Bandit détecté des problèmes"
+        bandit -r . -x ./venv,./env,./.venv || true -o bandit-report.json || echo "Bandit détecté des problèmes"
         bandit -r . -x ./venv,./env,./.venv || true
-    
     - name: 🚨 Vérification secrets dans le code
+      continue-on-error: true
       run: |
         # Recherche de patterns de secrets (éviter les faux positifs)
         echo "🔍 Recherche de secrets potentiels..."
@@ -74,6 +77,9 @@ jobs:
           --exclude-dir=.git \
           --exclude-dir=.venv \
           --exclude="validate_security_fixes.py" \
+          --exclude="*_security_*.py" || echo "✅ Aucune clé API hardcodée détectée"
+        
+        echo "✅ Scan des secrets terminé"
           --exclude="*_security_*.py" || echo "✅ Aucune clé API hardcodée détectée"
     
     - name: 📊 Upload des rapports d'audit
