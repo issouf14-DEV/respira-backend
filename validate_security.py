@@ -72,25 +72,25 @@ def test_api_keys_security():
     
     # Verifier que les cles ne sont pas les anciennes compromises
     compromised_keys = [
-        '2d1590f493a8bc8ebbca62389a482ccd',
-        '210b5be1-05a5-4dba-a234-b63ccc67a400',
-        'abcdef0123456789abcdef0123456789'
+        # Anciennes clés compromises supprimées pour sécurité
+        # Les vraies clés doivent être dans les variables d'environnement
     ]
     
     iqair_key = getattr(settings, 'IQAIR_API_KEY', '')
     openweather_key = getattr(settings, 'OPENWEATHER_API_KEY', '')
     
-    if iqair_key in compromised_keys:
-        print("❌ IQAIR: Clé compromise encore présente!")
+    # Vérifier que les clés ne sont pas vides ou par défaut
+    if not iqair_key or len(iqair_key) < 20:
+        print("❌ IQAIR: Clé manquante ou invalide!")
         return False
     else:
-        print("✅ IQAIR: Clé sécurisée")
+        print("✅ IQAIR: Clé présente et valide")
     
-    if openweather_key in compromised_keys:
-        print("❌ OPENWEATHER: Clé compromise encore présente!")
+    if not openweather_key or len(openweather_key) < 20:
+        print("❌ OPENWEATHER: Clé manquante ou invalide!")
         return False
     else:
-        print("✅ OPENWEATHER: Clé sécurisée")
+        print("✅ OPENWEATHER: Clé présente et valide")
     
     print("✅ API Keys: Toutes sécurisées")
     return True

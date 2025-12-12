@@ -5,7 +5,7 @@ Django==6.0
 # Django REST Framework - Dernière version compatible
 djangorestframework==3.16.1
 
-# JWT Authentication - Dernière version avec gestion privilèges sécurisée
+# JWT Authentication - Dernière version corrigée avec gestion privilèges sécurisée
 djangorestframework-simplejwt==5.5.1
 
 # CORS et Filtres

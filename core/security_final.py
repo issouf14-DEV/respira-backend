@@ -220,7 +220,7 @@ class XMLSecurityHelper:
     
     @staticmethod
     def safe_xml_parse(xml_string: str, max_size: int = 1048576) -> Any:
-        """Parser XML sécurisé avec defusedxml (si disponible)"""
+        """Parser XML sécurisé avec defusedxml (obligatoire)"""
         # Vérifier la taille
         if len(xml_string) > max_size:
             logger.warning(f"XML trop volumineux: {len(xml_string)} octets")
@@ -229,20 +229,13 @@ class XMLSecurityHelper:
             )
         
         try:
-            # Essayer d'importer defusedxml
+            # Utiliser defusedxml de manière obligatoire
             import defusedxml.ElementTree as DefusedET  # type: ignore
             tree = DefusedET.fromstring(xml_string)
             return tree
         except ImportError:
-            logger.warning("defusedxml non installé - utilisation du parser standard (non recommandé)")
-            # Fallback vers le parser standard (moins sécurisé)
-            import xml.etree.ElementTree as ET
-            try:
-                tree = ET.fromstring(xml_string)
-                return tree
-            except Exception as e:
-                logger.error(f"Erreur parsing XML: {str(e)}")
-                raise ValidationError("Document XML invalide")
+            logger.error("defusedxml est requis pour le parsing XML sécurisé")
+            raise ValidationError("Module de sécurité XML manquant")
         except Exception as e:
             logger.error(f"Erreur parsing XML: {str(e)}")
             raise ValidationError("Document XML invalide")
