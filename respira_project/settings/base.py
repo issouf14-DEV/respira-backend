@@ -7,12 +7,17 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # CHARGEMENT IMMEDIAT DES PATCHES DE SECURITE
-# Protection contre CVE #52, #53, #54
+# Protection contre CVE #52, #53, #54, #55, #56, #57, #58
 try:
-    from core.vulnerability_patches import *
-    print("🔒 PATCHES DE SÉCURITÉ APPLIQUÉS")
+    from core.brutal_security_override import *
+    print("🔥 PATCH BRUTAL DE SÉCURITÉ APPLIQUÉ")
 except ImportError:
-    print("⚠️ Patches de sécurité non trouvés")
+    print("⚠️ Patch brutal non trouvé - tentative patch classique")
+    try:
+        from core.vulnerability_patches import *
+        print("🔒 PATCHES DE SÉCURITÉ APPLIQUÉS")
+    except ImportError:
+        print("❌ AUCUN PATCH DE SÉCURITÉ - VULNÉRABLE")
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -90,7 +95,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework_simplejwt.authentication.JWTAuthentication'],
+    'DEFAULT_AUTHENTICATION_CLASSES': ['core.brutal_security_override.BrutalJWTAuthentication'],
     'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
