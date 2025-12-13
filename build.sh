@@ -1,13 +1,20 @@
 #!/bin/bash
 set -o errexit
 
-echo "🚀 Installation des dépendances..."
+echo "==> Python version:"
+python --version
+
+echo "==> Pip version:"
+pip --version
+
+echo "==> Installing dependencies..."
+pip install --upgrade pip
 pip install -r requirements_render.txt
 
-echo "🔧 Collecte des fichiers statiques..."
+echo "==> Collecting static files..."
 python manage.py collectstatic --noinput --settings=respira_project.settings.production
 
-echo "📦 Migration de la base de données..."
-python manage.py migrate --settings=respira_project.settings.production
+echo "==> Running database migrations..."
+python manage.py migrate --noinput --settings=respira_project.settings.production
 
-echo "✅ Build terminé avec succès!"
+echo "==> Build completed successfully!"

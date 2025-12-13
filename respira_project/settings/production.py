@@ -53,37 +53,30 @@ CSRF_COOKIE_SAMESITE = 'Strict'
 X_FRAME_OPTIONS = 'DENY'
 SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
 
-# Logging sécurisé
+# Logging pour Render (console uniquement)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '[{levelname}] {asctime} {module} {process:d} {thread:d} {message}',
+            'format': '[{levelname}] {asctime} {module} {message}',
             'style': '{',
         },
     },
     'handlers': {
-        'file': {
+        'console': {
             'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': 'django.log',
-            'formatter': 'verbose',
-        },
-        'security': {
-            'level': 'WARNING',
-            'class': 'logging.FileHandler',
-            'filename': 'security.log',
+            'class': 'logging.StreamHandler',
             'formatter': 'verbose',
         },
     },
     'root': {
-        'handlers': ['file'],
+        'handlers': ['console'],
         'level': 'INFO',
     },
     'loggers': {
         'django.security': {
-            'handlers': ['security'],
+            'handlers': ['console'],
             'level': 'WARNING',
             'propagate': False,
         },
