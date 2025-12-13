@@ -1,4 +1,5 @@
 #!/bin/bash
+set -o errexit
 
 echo "🚀 Installation des dépendances..."
 pip install -r requirements_render.txt
