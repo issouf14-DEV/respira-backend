@@ -30,4 +30,4 @@ Pillow==11.0.0
 
 # Packages de sécurité requis
 defusedxml==0.8.0rc2
-bleach==6.2.0
+bleach==6.3.0
