@@ -17,7 +17,7 @@ drf-yasg==1.21.8
 
 # Database
 psycopg2-binary==2.9.10
-dj-database-url==2.3.0
+dj-database-url==3.1.0
 
 # Environment et Utils
 python-dotenv==1.0.1
