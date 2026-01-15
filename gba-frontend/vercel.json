@@ -1,8 +1,17 @@
 {
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "https://le-gba-backend.onrender.com/api/:path*"
+      "source": "/api/(.*)",
+      "destination": "https://le-gba-backend.onrender.com/api/$1"
+    }
+  ],
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
