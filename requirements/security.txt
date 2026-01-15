@@ -1,0 +1,18 @@
+# Packages de sécurité pour Django
+django-security==0.18.0
+django-csp==3.8
+django-permissions-policy==4.20.0
+django-ratelimit==4.1.0
+django-extensions==3.2.3
+
+# Monitoring et logging sécurisé
+structlog==24.4.0
+django-structlog==8.1.0
+
+# Validation et sanitisation
+bleach==6.2.0
+defusedxml==0.8.0
+
+# Audit de sécurité
+safety==3.2.11
+bandit==1.8.0

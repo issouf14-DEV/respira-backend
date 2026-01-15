@@ -1,0 +1,66 @@
+# Fichiers à ignorer lors du déploiement sur Render
+
+# Fichiers de développement
+*.pyc
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Tests
+tests/
+test_*.py
+*_test.py
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Documentation locale
+docs/
+*.md
+!README.md
+
+# Fichiers d'environnement local
+.env
+.env.*
+!.env.example
+
+# Base de données locale
+*.sqlite3
+db.sqlite3
+
+# Médias et fichiers statiques locaux (seront regénérés)
+media/
+staticfiles/
+
+# Docker (non utilisé sur Render)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Scripts de développement local
+test_*.ps1
+verify_*.ps1
+check_*.py
+validate_*.py
+security_audit.py
+
+# Logs
+logs/
+*.log
+
+# Fichiers temporaires
+tmp/
+temp/
+*.tmp
