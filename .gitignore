@@ -1,0 +1,68 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+
+# Base de données
+*.sqlite3
+db.sqlite3
+
+# Variables d'environnement (CRITIQUE)
+.env
+.env.*
+!.env.example
+
+# Environnement virtuel
+venv/
+env/
+ENV/
+.venv/
+
+# Django
+staticfiles/
+media/
+*.log
+logs/
+*.pot
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+.vscode-test/
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+*.swp
+*~
+desktop.ini
+
+# Documentation inutile
+tutos/*.md
+!README.md
+!LICENSE
+API_*.txt
+API_*.md
+*_DOCUMENTATION*.md
+*_GUIDE*.md
+
+# Tests et scripts temporaires
+list_views.py
+test_*.ps1
+check_*.py
+show_*.py
+verify_*.py
+prepare_*.ps1
+
+# Node modules (si présent)
+node_modules/
+
+# Coverage
+htmlcov/
+.coverage
+.pytest_cache/
