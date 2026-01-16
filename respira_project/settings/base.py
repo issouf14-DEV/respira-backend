@@ -118,7 +118,7 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': True,
-    'ALGORITHM': 'RS256',  # Plus sécurisé que HS256
+    'ALGORITHM': 'HS256',  # Algorithme compatible avec SECRET_KEY
     'SIGNING_KEY': SECRET_KEY,
     'VERIFYING_KEY': None,
     'AUTH_HEADER_TYPES': ('Bearer',),
