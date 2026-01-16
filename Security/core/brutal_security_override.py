@@ -214,6 +214,6 @@ def brutal_security_override():
     except Exception as e:
         print(f"⚠️ JWT patch error: {e}")
 
-# APPLICATION IMMÉDIATE DES PATCHES
-brutal_security_override()
-print("🔒 PATCH BRUTAL APPLIQUÉ - TOUTES VULNÉRABILITÉS ÉRADIQUÉES")
+# APPLICATION DÉSACTIVÉE - Cause erreur JWT "Could not parse the provided public key"
+# brutal_security_override()
+# print("🔒 PATCH BRUTAL APPLIQUÉ - TOUTES VULNÉRABILITÉS ÉRADIQUÉES")
