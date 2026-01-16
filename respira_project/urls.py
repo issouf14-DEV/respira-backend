@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from apps.users.health import health_check
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -39,6 +40,7 @@ def api_root(request):
 
 urlpatterns = [
     path('', api_root, name='api-root'),
+    path('health/', health_check, name='health-check'),
     path('admin/', admin.site.urls),
     path('api/v1/', include('api.v1.urls')),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
