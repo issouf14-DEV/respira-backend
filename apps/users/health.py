@@ -17,6 +17,7 @@ def health_check(request):
         'status': 'ok',
         'database': False,
         'migrations': False,
+        'jwt_config': {},
         'env_vars': {},
         'errors': []
     }
@@ -39,6 +40,19 @@ def health_check(request):
     except Exception as e:
         checks['status'] = 'error'
         checks['errors'].append(f"Migration error: {str(e)}")
+    
+    # Vérifier la config JWT
+    try:
+        from django.conf import settings
+        jwt_settings = getattr(settings, 'SIMPLE_JWT', {})
+        checks['jwt_config'] = {
+            'algorithm': jwt_settings.get('ALGORITHM', 'NOT SET'),
+            'signing_key_type': type(jwt_settings.get('SIGNING_KEY')).__name__,
+            'signing_key_prefix': str(jwt_settings.get('SIGNING_KEY', ''))[:10] + '...',
+            'verifying_key': jwt_settings.get('VERIFYING_KEY'),
+        }
+    except Exception as e:
+        checks['errors'].append(f"JWT config error: {str(e)}")
     
     # Vérifier les variables d'environnement
     checks['env_vars'] = {
