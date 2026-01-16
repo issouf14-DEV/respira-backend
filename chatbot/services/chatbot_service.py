@@ -1,7 +1,10 @@
 import os
 from dotenv import load_dotenv
 from google import genai
-from ddgs import DDGS
+try:
+    from duckduckgo_search import DDGS
+except ImportError:
+    from ddgs import DDGS
 
 # Charger les variables d'environnement
 load_dotenv()
