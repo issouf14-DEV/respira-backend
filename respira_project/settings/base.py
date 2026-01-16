@@ -45,8 +45,8 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    'core.middleware.SecurityMiddleware',  # Middleware de sécurité personnalisé
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # CORS en premier pour Flutter
+    'core.flutter_middleware.FlutterMiddleware',  # Middleware optimisé Flutter
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -154,8 +154,8 @@ SIMPLE_JWT = {
     'REQUIRE_JTI': True,
 }
 
-# Configuration CORS pour Flutter (accepte toutes les origines en dev)
-CORS_ALLOW_ALL_ORIGINS = True  # Pour développement Flutter
+# Configuration CORS pour Flutter mobile
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
     'accept',
@@ -167,6 +167,7 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+    'access-control-allow-origin',
 ]
 CORS_ALLOW_METHODS = [
     'DELETE',
@@ -176,6 +177,8 @@ CORS_ALLOW_METHODS = [
     'POST',
     'PUT',
 ]
+CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
+CORS_PREFLIGHT_MAX_AGE = 86400  # 24h
 
 IQAIR_API_KEY = os.getenv('IQAIR_API_KEY', '')
 OPENWEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY', '')

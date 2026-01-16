@@ -34,16 +34,20 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_HSTS_SECONDS = 31536000  # 1 an
+SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
-# Sécurité des cookies
+# Sécurité des cookies - Optimisé pour Flutter mobile
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = 'Strict'
-CSRF_COOKIE_HTTPONLY = True
-CSRF_COOKIE_SAMESITE = 'Strict'
+SESSION_COOKIE_SAMESITE = None  # Permet les requêtes cross-origin de Flutter
+CSRF_COOKIE_HTTPONLY = False  # Flutter doit pouvoir lire le token CSRF
+CSRF_COOKIE_SAMESITE = None
+CSRF_TRUSTED_ORIGINS = [
+    'https://respira-backend.onrender.com',
+    'http://localhost:8000',
+]
 
 # Protection contre les attaques
 X_FRAME_OPTIONS = 'DENY'
