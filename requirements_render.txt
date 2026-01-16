@@ -1,3 +1,4 @@
+# RespirIA Backend Dependencies - Force rebuild 2026-01-16
 Django>=5.0,<5.2
 django-cors-headers>=4.3.0
 djangorestframework>=3.14.0
