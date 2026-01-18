@@ -20,23 +20,37 @@ class SensorData(models.Model):
     bracelet = models.ForeignKey(BraceletDevice, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(db_index=True)
     
-    # ⭐⭐⭐⭐⭐ FEATURES CRITIQUES
-    spo2 = models.IntegerField(null=True, blank=True, help_text="SpO2 (70-100%)")
-    respiratory_rate = models.IntegerField(null=True, blank=True, help_text="Fréquence respiratoire (10-40/min)")
-    aqi = models.IntegerField(null=True, blank=True, help_text="Air Quality Index (0-500)")
+    # ⭐⭐⭐⭐⭐ FEATURES CRITIQUES - CAPTEURS MÉDICAUX
+    # MAX30102 - Fréquence cardiaque et SpO₂
+    spo2 = models.IntegerField(null=True, blank=True, help_text="SpO2 (70-100%) - MAX30102")
+    heart_rate = models.IntegerField(null=True, blank=True, help_text="Fréquence cardiaque (30-220 bpm) - MAX30102")
     
-    # ⭐⭐⭐⭐ FEATURES IMPORTANTES
-    heart_rate = models.IntegerField(null=True, blank=True, help_text="Fréquence cardiaque (30-220 bpm)")
-    smoke_detected = models.BooleanField(default=False, help_text="Fumée détectée")
+    # Capteurs respiratoires
+    respiratory_rate = models.IntegerField(null=True, blank=True, help_text="Fréquence respiratoire (10-40/min)")
+    
+    # ⭐⭐⭐⭐⭐ CAPTEURS ENVIRONNEMENTAUX UBIDOTS
+    # DHT11 - Température et Humidité
+    temperature = models.FloatField(null=True, blank=True, help_text="Température ambiante (°C) - DHT11")
+    humidity = models.IntegerField(null=True, blank=True, help_text="Humidité ambiante (%) - DHT11")
+    
+    # CJMCU-811 - Qualité de l'air 
+    eco2 = models.IntegerField(null=True, blank=True, help_text="CO2 équivalent (ppm) - CJMCU-811")
+    tvoc = models.IntegerField(null=True, blank=True, help_text="Composés organiques volatils (ppb) - CJMCU-811")
+    
+    # AQI externe (APIs)
+    aqi = models.IntegerField(null=True, blank=True, help_text="Air Quality Index externe (0-500)")
+    
+    # ⭐⭐⭐⭐ FEATURES IMPORTANTES - ALERTES
+    smoke_detected = models.BooleanField(default=False, help_text="Fumée détectée - Alerte critique")
     pollen_level = models.CharField(max_length=10, blank=True, choices=[
         ('LOW', 'Faible'),
         ('MEDIUM', 'Moyen'),
         ('HIGH', 'Élevé')
     ], help_text="Niveau de pollen")
     
-    # ⭐⭐⭐ FEATURES MODÉRÉES
-    temperature = models.FloatField(null=True, blank=True, help_text="Température (°C)")
-    humidity = models.IntegerField(null=True, blank=True, help_text="Humidité (%)")
+    # ⭐⭐⭐ UBIDOTS - MÉTADONNÉES 
+    ubidots_device_id = models.CharField(max_length=100, null=True, blank=True, help_text="ID device Ubidots")
+    ubidots_timestamp = models.BigIntegerField(null=True, blank=True, help_text="Timestamp Ubidots (Unix)")
     activity_level = models.CharField(max_length=20, blank=True, choices=[
         ('REST', 'Repos'),
         ('WALK', 'Marche'),
@@ -120,6 +134,24 @@ class SensorData(models.Model):
                 score += 10
             elif self.aqi > 50:
                 score += 5
+        
+        # ⭐⭐⭐⭐ eCO2 - CJMCU-811 (poids: 15 points)
+        if self.eco2 is not None:
+            if self.eco2 > 5000:  # Dangereux
+                score += 15
+            elif self.eco2 > 2000:  # Mauvais
+                score += 10
+            elif self.eco2 > 1000:  # Modéré
+                score += 5
+        
+        # ⭐⭐⭐ TVOC - CJMCU-811 (poids: 10 points)
+        if self.tvoc is not None:
+            if self.tvoc > 3300:  # Mauvais
+                score += 10
+            elif self.tvoc > 1000:  # Modéré
+                score += 5
+            elif self.tvoc > 220:  # Léger
+                score += 2
         
         # ⭐⭐⭐⭐ Fréquence cardiaque (poids: 15 points)
         if self.heart_rate is not None:

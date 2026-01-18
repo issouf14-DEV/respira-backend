@@ -13,14 +13,17 @@ class SensorDataSerializer(serializers.ModelSerializer):
         model = SensorData
         fields = [
             'id', 'timestamp', 'created_at',
-            # ⭐⭐⭐⭐⭐ CRITIQUES
-            'spo2', 'respiratory_rate', 'aqi',
-            # ⭐⭐⭐⭐ IMPORTANTES  
-            'heart_rate', 'smoke_detected', 'pollen_level',
-            # ⭐⭐⭐ MODÉRÉES
-            'temperature', 'humidity', 'activity_level', 'steps',
-            # ⭐⭐ UTILES
-            'hour_of_day',
+            # ⭐⭐⭐⭐⭐ CAPTEURS MÉDICAUX CRITIQUES (MAX30102)
+            'spo2', 'heart_rate', 'respiratory_rate',
+            # ⭐⭐⭐⭐⭐ CAPTEURS ENVIRONNEMENTAUX UBIDOTS
+            'temperature', 'humidity',  # DHT11
+            'eco2', 'tvoc',            # CJMCU-811
+            # ⭐⭐⭐⭐ QUALITÉ DE L'AIR
+            'aqi', 'smoke_detected', 'pollen_level',
+            # ⭐⭐⭐ ACTIVITÉ & MÉTADONNÉES
+            'activity_level', 'steps', 'hour_of_day',
+            # ⭐⭐ UBIDOTS METADATA
+            'ubidots_device_id', 'ubidots_timestamp',
             # ANALYSES AVANCÉES
             'spo2_variation_1h', 'aqi_avg_3h',
             # RISQUE
@@ -63,8 +66,16 @@ class SensorDataCreateSerializer(serializers.ModelSerializer):
         return SensorDataValidator.validate_temperature(value)
     
     def validate_humidity(self, value):
-        """Validation sécurisée de l'humidité"""
+        """Validation sécurisée de l'humidité - DHT11"""
         return SensorDataValidator.validate_humidity(value)
+    
+    def validate_eco2(self, value):
+        """Validation sécurisée de l'eCO2 - CJMCU-811"""
+        return SensorDataValidator.validate_eco2(value)
+    
+    def validate_tvoc(self, value):
+        """Validation sécurisée du TVOC - CJMCU-811"""
+        return SensorDataValidator.validate_tvoc(value)
     
     def validate(self, data):
         """Validation globale de l'intégrité des données"""

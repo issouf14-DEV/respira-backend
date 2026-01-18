@@ -269,3 +269,6 @@ LOGGING = {
         },
     },
 }
+
+# Configuration Ubidots
+UBIDOTS_API_TOKEN = os.getenv('UBIDOTS_API_TOKEN', '')

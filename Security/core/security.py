@@ -70,26 +70,64 @@ class SensorDataValidator:
     
     @staticmethod
     def validate_humidity(value):
-        """Valider humidité"""
+        """Valider humidité - DHT11"""
         if value is not None:
             if not (0 <= value <= 100):
                 raise ValidationError(f"Humidité invalide: {value}%. Doit être entre 0-100%")
         return value
     
     @staticmethod
+    def validate_eco2(value):
+        """Valider eCO2 - CJMCU-811"""
+        if value is not None:
+            if not (350 <= value <= 8192):  # Plage typique CJMCU-811
+                raise ValidationError(f"eCO2 invalide: {value}ppm. Doit être entre 350-8192ppm")
+            if value > 5000:
+                import logging
+                logger = logging.getLogger('django.security')
+                logger.warning(f"eCO2 très élevé: {value}ppm - Ventilation requise")
+        return value
+    
+    @staticmethod
+    def validate_tvoc(value):
+        """Valider TVOC - CJMCU-811"""
+        if value is not None:
+            if not (0 <= value <= 60000):  # Plage typique CJMCU-811
+                raise ValidationError(f"TVOC invalide: {value}ppb. Doit être entre 0-60000ppb")
+            if value > 3300:  # Seuil d'alerte TVOC
+                import logging
+                logger = logging.getLogger('django.security')
+                logger.warning(f"TVOC élevé: {value}ppb - Qualité d'air dégradée")
+        return value
+    
+    @staticmethod
     def validate_data_integrity(data):
         """Valider l'intégrité globale des données"""
-        # Vérifier la cohérence entre les métriques
+        # Vérifier la cohérence entre les métriques médicales
         spo2 = data.get('spo2')
         heart_rate = data.get('heart_rate')
         respiratory_rate = data.get('respiratory_rate')
         
-        # Détection d'anomalies corrélées (possibles attaques)
+        # Vérifier la cohérence environnementale
+        eco2 = data.get('eco2')
+        tvoc = data.get('tvoc')
+        temperature = data.get('temperature')
+        humidity = data.get('humidity')
+        
+        # Détection d'anomalies médicales corrélées
         if spo2 and heart_rate and respiratory_rate:
             if spo2 < 90 and heart_rate < 60 and respiratory_rate > 30:
                 import logging
                 logger = logging.getLogger('django.security')
-                logger.critical("Combinaison de valeurs suspecte détectée - Possible attaque ou urgence médicale")
+                logger.critical("Combinaison de valeurs médicales suspecte - Possible urgence médicale")
+        
+        # Cohérence capteurs environnementaux Ubidots
+        if eco2 and tvoc:
+            # eCO2 et TVOC doivent être corrélés
+            if eco2 > 2000 and tvoc < 200:
+                import logging
+                logger = logging.getLogger('django.security')
+                logger.warning("Incohérence eCO2/TVOC détectée - Vérifier capteur CJMCU-811")
         
         return data
 
