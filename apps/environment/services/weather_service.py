@@ -8,8 +8,9 @@ class WeatherService:
     
     BASE_URL = "http://api.openweathermap.org/data/2.5"
     
-    def __init__(self):
+    def __init__(self, timeout=5):
         self.api_key = settings.OPENWEATHER_API_KEY
+        self.timeout = timeout  # Timeout optimisé pour IA
     
     def get_city_weather(self, city='Abidjan'):
         """Récupère la météo pour une ville donnée"""
@@ -26,7 +27,7 @@ class WeatherService:
                 'lang': 'fr'
             }
             
-            response = secure_get(url, params=params, timeout=10)
+            response = secure_get(url, params=params, timeout=self.timeout)
             response.raise_for_status()
             data = response.json()
             
@@ -63,3 +64,7 @@ class WeatherService:
         )
         
         return weather
+    
+    def get_weather_data(self, city):
+        """Alias pour get_city_weather - Compatibilité API IA"""
+        return self.get_city_weather(city)
