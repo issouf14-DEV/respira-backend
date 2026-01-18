@@ -25,28 +25,33 @@ class UbidotsService:
             logger.warning("UBIDOTS_API_TOKEN non configuré dans settings")
     
     def get_devices(self):
-        """Récupérer tous les devices Ubidots"""
+        """Récupérer tous les devices Ubidots via API v2.0"""
         try:
+            # Utiliser l'API v2.0 qui fonctionne
             response = requests.get(
-                f"{self.base_url}/devices/",
+                'https://industrial.api.ubidots.com/api/v2.0/devices/',
                 headers=self.headers
             )
             response.raise_for_status()
-            return response.json()
+            data = response.json()
+            # v2.0 retourne {"results": [...]}
+            return data.get('results', data) if isinstance(data, dict) else data
         except Exception as e:
             logger.error(f"Erreur récupération devices Ubidots: {e}")
             return []
     
     def get_device_variables(self, device_id):
-        """Récupérer les variables d'un device"""
+        """Récupérer les variables d'un device via datasources endpoint"""
         try:
+            # Utiliser l'endpoint datasources qui contient les variables
             response = requests.get(
-                f"{self.base_url}/devices/{device_id}/",
+                f"{self.base_url}/datasources/{device_id}/variables",
                 headers=self.headers
             )
             response.raise_for_status()
-            device_data = response.json()
-            return device_data.get('variables', [])
+            data = response.json()
+            # Retourne {"results": [...]} ou directement une liste
+            return data.get('results', data) if isinstance(data, dict) else data
         except Exception as e:
             logger.error(f"Erreur récupération variables device {device_id}: {e}")
             return []

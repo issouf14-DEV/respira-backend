@@ -19,6 +19,7 @@ urlpatterns = [
     path('ubidots/sync/', ubidots_views.sync_ubidots_data, name='ubidots-sync'),
     path('ubidots/devices/', ubidots_views.ubidots_devices, name='ubidots-devices'),
     path('ubidots/devices/<str:device_id>/variables/', ubidots_views.ubidots_variables, name='ubidots-variables'),
+    path('ubidots/max30102/', ubidots_views.ubidots_max30102_data, name='ubidots-max30102'),
     
     # 📊 APIs PAR TYPE DE CAPTEUR
     path('data/<str:sensor_type>/', ubidots_views.sensor_data_by_type, name='sensor-data-by-type'),

@@ -280,3 +280,102 @@ def ubidots_variables(request, device_id):
         'variables': simplified_variables,
         'count': len(simplified_variables)
     })
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def ubidots_max30102_data(request):
+    """Récupérer les données SPO2 et fréquence cardiaque (MAX30102) depuis Ubidots.
+    Paramètres:
+      - api_token (obligatoire)
+      - device_id (optionnel) pour cibler un device précis
+      - device_label (optionnel) pour filtrer par label Ubidots
+      - hours (optionnel, défaut 24) période à récupérer
+    Retourne: liste d'objets { spo2, heart_rate, timestamp, device_id, device_label }
+    """
+    try:
+        api_token = request.GET.get('api_token')
+        device_id_filter = request.GET.get('device_id')
+        device_label_filter = request.GET.get('device_label')
+        hours = int(request.GET.get('hours', 24))
+
+        if not api_token:
+            return Response({'error': 'api_token Ubidots requis'}, status=status.HTTP_400_BAD_REQUEST)
+
+        service = UbidotsService(api_token=api_token)
+
+        end_time = timezone.now()
+        start_time = end_time - timedelta(hours=hours)
+
+        devices = service.get_devices() or []
+
+        def normalize_values(values):
+            # Ubidots peut renvoyer {'results': [...]} ou directement une liste
+            if isinstance(values, dict) and 'results' in values:
+                return values['results']
+            return values or []
+
+        all_entries = []
+
+        for device in devices:
+            did = device.get('id')
+            dlabel = device.get('label', did)
+
+            if device_id_filter and did != device_id_filter:
+                continue
+            if device_label_filter and dlabel != device_label_filter:
+                continue
+
+            variables = service.get_device_variables(did) or []
+
+            spo2_var = None
+            hr_var = None
+            for var in variables:
+                vlabel = (var.get('label') or '').lower()
+                if vlabel in ['spo2', 'spo_2', 'oxygen']:
+                    spo2_var = var['id']
+                elif vlabel in ['heart_rate', 'heartrate', 'hr', 'bpm']:
+                    hr_var = var['id']
+
+            # Récupérer les valeurs
+            spo2_values = normalize_values(service.get_variable_values(spo2_var, start_time, end_time)) if spo2_var else []
+            hr_values = normalize_values(service.get_variable_values(hr_var, start_time, end_time)) if hr_var else []
+
+            # Indexer par timestamp (ms)
+            merged = {}
+            for item in spo2_values:
+                ts = item.get('timestamp')
+                if ts is None:
+                    continue
+                merged.setdefault(ts, {})
+                merged[ts]['spo2'] = item.get('value')
+            for item in hr_values:
+                ts = item.get('timestamp')
+                if ts is None:
+                    continue
+                merged.setdefault(ts, {})
+                merged[ts]['heart_rate'] = item.get('value')
+
+            # Construire les entrées
+            for ts_ms, vals in merged.items():
+                ts_dt = datetime.fromtimestamp(ts_ms / 1000, tz=timezone.utc)
+                all_entries.append({
+                    'spo2': vals.get('spo2'),
+                    'heart_rate': vals.get('heart_rate'),
+                    'timestamp': ts_dt.isoformat().replace('+00:00', 'Z'),
+                    'device_id': did,
+                    'device_label': dlabel
+                })
+
+        # Trier par timestamp croissant
+        all_entries.sort(key=lambda x: x['timestamp'])
+
+        return Response({
+            'sensor': 'max30102',
+            'hours': hours,
+            'count': len(all_entries),
+            'data': all_entries
+        })
+    except Exception as e:
+        logger.error(f"❌ Erreur ubidots_max30102_data: {e}")
+        return Response({'error': 'Erreur serveur lors de la récupération des données'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
